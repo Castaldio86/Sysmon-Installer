@@ -1,4 +1,4 @@
-﻿<#                                                                                                                                                               
+﻿#                                                                                                                                                               
 #                                                                                                                                                               
 #                                                                                                                                                               
 #                                                                                                                                                               
@@ -24,16 +24,14 @@
 #																																							    
 #																																								
 #																																								
-#>
+#
 
-<#
 #Script is created by Gianni Castaldi (gianni.castaldi@wortell.nl)
 #Check sysmon
 #Download Sysmon
 #Download sysmonconfig.xml
 #Install Sysmon
 #Update Sysmon
-#>
 
 #Script variables
 $SysmonHash = "80B110B91730729BE60C7D79C55FFF0EC893FD4CFB5F44D04C433EE8E95C5E20"
