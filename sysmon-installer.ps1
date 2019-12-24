@@ -147,7 +147,7 @@ try {
     }    
 } 
 catch {
-    write-Error "Something went wrong $($_.Exception.Message)"
+    Throw "Something went wrong $($_.Exception.Message)"
 }
 return $xmlfile
 }
