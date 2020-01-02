@@ -191,8 +191,10 @@ Start-Process -FilePath $SysmonEXE -ArgumentList $Arguments -verb RunAs -Wait
 
 #___Main___
 $SysmonStatus = Test-Sysmon
+write ("Pre:" + $SysmonStatus)
 $SysmonXML = Download-SysmonConfig
 $SysmonEXE = Download-Sysmon
+$Installed = $false
 
 # Install (Not installed)
 if ($SysmonStatus.HashCorrect -eq $false -and $SysmonStatus.XMLHashCorrect -eq $false){
@@ -200,44 +202,46 @@ if ($SysmonStatus.HashCorrect -eq $false -and $SysmonStatus.XMLHashCorrect -eq $
     $Parameter = "i"
     Install-Sysmon $Parameter $SysmonEXE $SysmonXML
     $SysmonStatus = Test-Sysmon
+    $Installed = $true
 }
 
-# Reinstall (Installed not Running)
-if ($SysmonStatus.ServiceExist -eq $true -and $SysmonStatus.SysmonPath.State -ne "Running"){
-    Write "Reinstall (Installed not Running)"
-    $Parameter = "u"
-    Install-Sysmon $Parameter $SysmonStatus.SysmonPath.PathName
-    $Parameter = "i"
-    Install-Sysmon $Parameter $SysmonEXE $SysmonXML
-    $SysmonStatus = Test-Sysmon
-}
+if ($Installed -eq $false){
+    # Reinstall (Installed not Running)
+    if ($SysmonStatus.ServiceExist -eq $true -and $SysmonStatus.SysmonPath.State -ne "Running"){
+        Write "Reinstall (Installed not Running)"
+        $Parameter = "u"
+        Install-Sysmon $Parameter $SysmonStatus.SysmonPath.PathName
+        $Parameter = "i"
+        Install-Sysmon $Parameter $SysmonEXE $SysmonXML
+        $SysmonStatus = Test-Sysmon
+    }
 
-# Reinstall (Wrong Sysmon Version)
-if ($SysmonStatus.HashCorrect -eq $false -and $SysmonStatus.XMLHashCorrect -eq $true){
-    Write "Reinstall (Wrong Sysmon Version)"
-    $Parameter = "u"
-    Install-Sysmon $Parameter $SysmonStatus.SysmonPath.PathName
-    $Parameter = "i"
-    Install-Sysmon $Parameter $SysmonEXE $SysmonXML
-    $SysmonStatus = Test-Sysmon
-}
+    # Reinstall (Wrong Sysmon Version)
+    if ($SysmonStatus.HashCorrect -eq $false -and $SysmonStatus.XMLHashCorrect -eq $true){
+        Write "Reinstall (Wrong Sysmon Version)"
+        $Parameter = "u"
+        Install-Sysmon $Parameter $SysmonStatus.SysmonPath.PathName
+        $Parameter = "i"
+        Install-Sysmon $Parameter $SysmonEXE $SysmonXML
+        $SysmonStatus = Test-Sysmon
+    }
 
-# Reinstall (Wrong Name)
-if ($SysmonStatus.ServiceExist -eq $true -and $SysmonStatus.SysmonPath.Name -ne "Sysmon"){
-    Write "Reinstall (Wrong Name)"
-    $Parameter = "u"
-    Install-Sysmon $Parameter $SysmonStatus.SysmonPath.PathName
-    $Parameter = "i"
-    Install-Sysmon $Parameter $SysmonEXE $SysmonXML
-    $SysmonStatus = Test-Sysmon
-}
+    # Reinstall (Wrong Name)
+    if ($SysmonStatus.ServiceExist -eq $true -and $SysmonStatus.SysmonPath.Name -ne "Sysmon"){
+        Write "Reinstall (Wrong Name)"
+        $Parameter = "u"
+        Install-Sysmon $Parameter $SysmonStatus.SysmonPath.PathName
+        $Parameter = "i"
+        Install-Sysmon $Parameter $SysmonEXE $SysmonXML
+        $SysmonStatus = Test-Sysmon
+    }
 
-# Change (Wrong XML Version)
-if ($SysmonStatus.HashCorrect -eq $true -and $SysmonStatus.XMLHashCorrect -eq $false){
-    Write "Change (Wrong XML Version)"
-    $Parameter = "c"
-    Install-Sysmon $Parameter $SysmonEXE $SysmonXML
-    $SysmonStatus = Test-Sysmon
+    # Change (Wrong XML Version)
+    if ($SysmonStatus.HashCorrect -eq $true -and $SysmonStatus.XMLHashCorrect -eq $false){
+        Write "Change (Wrong XML Version)"
+        $Parameter = "c"
+        Install-Sysmon $Parameter $SysmonEXE $SysmonXML
+        $SysmonStatus = Test-Sysmon
+    }
 }
-
-write $SysmonStatus
+write ("Post:" + $SysmonStatus)
