@@ -1,37 +1,53 @@
-﻿#                                                                                                                                                               
-#                                                                                                                                                               
-#                                                                                                                                                               
-#                                                                                                                                                               
-#                                                                                                                                                               
-#                                                                                                                                   .         .                 
-#                                                                                                  ..                          .*////     *////                 
-#                                                                                             */////.                          //////    //////                 
-#                                                                                            ,//////.                          //////    //////                 
-#                                                                                            ,//////.                          //////    //////                 
-#                //////       //////       //////      *////////////*     .//////,*////,  //////////////    /////////////      //////    //////                 
-#                //////       //////       //////    *///////**////////    ////////////,  //////////////  //////*  .//////.    //////    //////                 
-#                //////       //////       //////   *//////      ///////   /////////*,.      ,//////     //////*     //////    //////    //////                 
-#                //////       //////       //////   //////*      *//////   ///////           ,//////     ///////////////////   //////    //////                 
-#                //////       //////       //////  .//////*      ,//////.  //////*           ,//////     ///////////////////  .//////   .//////                 
-#                //////       //////       //////   ///////      ///////   //////,           ,//////     //////               .//////   .//////                 
-#                .//////,   ,////////,    ///////   ,//////*     ///////   //////,           ,//////     //////*     //////*   //////    //////                 
-#                 ,////////////////////////////,      ////////////////     //////,           ,//////      ,///////////////.    ////////. ////////               
-#                   *///////////  ///////////*          *//////////*       //////,           ,//////.       ,///////////.       ///////.  ///////               
-#                                                                                             //////////                                                        
-#                                                                                              /////////                                                        
-#                                                                                                                                                               
-#                                                                                                                                                                
-#																																							    
-#																																								
-#																																								
-#
+﻿<#                                                                                                                                                               
+                                                                                                                                                               
+                                                                                                                                                               
+                                                                                                                                                               
+                                                                                                                                                               
+                                                                                                                                   .         .                 
+                                                                                                  ..                          .*////     *////                 
+                                                                                             */////.                          //////    //////                 
+                                                                                            ,//////.                          //////    //////                 
+                                                                                            ,//////.                          //////    //////                 
+                //////       //////       //////      *////////////*     .//////,*////,  //////////////    /////////////      //////    //////                 
+                //////       //////       //////    *///////**////////    ////////////,  //////////////  //////*  .//////.    //////    //////                 
+                //////       //////       //////   *//////      ///////   /////////*,.      ,//////     //////*     //////    //////    //////                 
+                //////       //////       //////   //////*      *//////   ///////           ,//////     ///////////////////   //////    //////                 
+                //////       //////       //////  .//////*      ,//////.  //////*           ,//////     ///////////////////  .//////   .//////                 
+                //////       //////       //////   ///////      ///////   //////,           ,//////     //////               .//////   .//////                 
+                .//////,   ,////////,    ///////   ,//////*     ///////   //////,           ,//////     //////*     //////*   //////    //////                 
+                 ,////////////////////////////,      ////////////////     //////,           ,//////      ,///////////////.    ////////. ////////               
+                   *///////////  ///////////*          *//////////*       //////,           ,//////.       ,///////////.       ///////.  ///////               
+                                                                                             //////////                                                        
+                                                                                              /////////                                                        
+                                                                                                                                                               
+                                                                                                                                                                
+																																							    
+																																								
+																																								
+#>
 
-#Script is created by Gianni Castaldi (gianni.castaldi@wortell.nl)
-#Check sysmon
-#Download Sysmon
-#Download sysmonconfig.xml
-#Install Sysmon
-#Update Sysmon
+<#Script is created by Gianni Castaldi (gianni.castaldi@wortell.nl)
+Check sysmon
+Download Sysmon
+Download sysmonconfig.xml
+Install Sysmon
+Update Sysmon
+#>
+
+# Code to trust all certificates
+add-type @"
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+public class TrustAllCertsPolicy : ICertificatePolicy {
+    public bool CheckValidationResult(
+        ServicePoint srvPoint, X509Certificate certificate,
+        WebRequest request, int certificateProblem) {
+        return true;
+    }
+}
+"@
+[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+[System.Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
 
 #Script variables
 $SysmonHash = "80B110B91730729BE60C7D79C55FFF0EC893FD4CFB5F44D04C433EE8E95C5E20"
@@ -124,7 +140,7 @@ function Download-SysmonConfig
 try {
     $tmpfile = ""
     $tmpfile = [System.IO.Path]::GetTempFileName()
-    $url = "https://github.com/Castaldio86/Sysmon-Installer/blob/master/sysmonconfig.xml"
+    $url = "https://raw.githubusercontent.com/Castaldio86/Sysmon-Installer/master/sysmonconfig.xml"
     $client = New-Object System.Net.WebClient
     $client.DownloadFile($url, $tmpfile)
     Write-Verbose 'Sucessfully downloaded sysmonconfig.xml'
