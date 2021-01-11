@@ -50,8 +50,8 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
 [System.Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
 
 #Script variables
-$SysmonHash = "80B110B91730729BE60C7D79C55FFF0EC893FD4CFB5F44D04C433EE8E95C5E20"
-$SysmonConfigHash = "2603EC0EF528EA1FF10A2D60D3885C1B8887AC02"
+$SysmonHash = "805D13489161080DE14F0B86CBF1F28EF3291D882A572D65A30AAB9CB1F18379"
+$SysmonConfigHash = "EE00CB771D7256AAF98B29E01684A384E6528C51"
 
 #Check if correct version of Sysmon is installed
 function Test-Sysmon
